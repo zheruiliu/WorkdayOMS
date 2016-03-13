@@ -17,21 +17,33 @@ public class JoinIds implements Ids {
 		pq.add(dataEntry);
 	}
 
+	/**
+	 * return short id, not good to use when data large
+	 */
 	@Override
-	public short nextId() {
+	public synchronized short nextId() {
 		return pq.size() > 0 ? (short)pq.remove().getId() : Ids.END_OF_IDS;
 	}
 	
+	/**
+	 * return next id(key) or data, get  method also need synchronized because update pq
+	 */
 	@Override
-	public long nextKey() {
+	public synchronized long nextKey() {
 		return pq.size() > 0 ? pq.remove().getId() : Ids.END_OF_IDS;
 	}
-
+	
+	/**
+	 * next entry
+	 */
 	@Override
-	public DataEntry nextEntry() {
+	public synchronized DataEntry nextEntry() {
 		return pq.size() > 0 ? pq.remove() : null;
 	}
 	
+	/**
+	 * wait all thread finish
+	 */
 	public synchronized void waitFinish() {
 		while(totalContainer != 0) {
 			try {
